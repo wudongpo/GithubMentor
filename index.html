@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<head>
+    <title>Github Mentor Planet</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+	  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+</head>
+
+<body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form class="form-inline" role="form">
+                    <div class="form-group">
+                        <label class="sr-only" for="githubUser">Github User Name</label>
+                        <input type="text" class="form-control" id="githubUser" placeholder="Enter Github User Name or Email">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="githubPassword">Password</label>
+                        <input type="password" class="form-control" id="githubPassword" placeholder="Password">
+                    </div>
+                    <button type="button" id="githubAuthButton" onclick="doGithubAuth()" class="btn btn-default">Github SignIn</button>
+                </form>
+            </div>
+        </div>
+        <div class="row" id="followingUsersContainer"></div>
+    </div>
+</body>
+<script src="js/lib/underscore-min.js"></script>
+<script src="js/lib/base64.js"></script>
+<script src="js/github.js"></script>
+<script type="text/javascript">
+function doGithubAuth() {
+    var github = new Github({
+        username: document.getElementById("githubUser").value,
+        password: document.getElementById("githubPassword").value
+    });
+    var user = github.getUser();
+    user.listFollowing(document.getElementById("githubUser").value, function(err, userData) {
+        if (!err) {
+            // console.log(userData);
+            [].forEach.call(userData, function(otherUser) {
+                var _gravatarImg = document.createElement('img');
+                _gravatarImg.src = otherUser["avatar_url"];
+                _gravatarImg.width = 128;
+                _gravatarImg.height = 128;
+                _gravatarImg.classList.add('img-circle');
+                var _userName = document.createElement('h4')
+                _userName.innerHTML = otherUser.login;
+                var _followingUserBox = document.createElement('div');
+                _followingUserBox.classList.add('col-md-4');
+                _followingUserBox.appendChild(_gravatarImg);
+                _followingUserBox.appendChild(_userName);
+                document.getElementById('followingUsersContainer').appendChild(_followingUserBox);
+            })
+        }
+    });
+    // TODO: Using user.userRepos({followingUser}, cb) to analyze every repo's language
+    // then take the most counted one as this user's main language tag
+}
+</script>
+
+</html>
