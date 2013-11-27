@@ -12,29 +12,85 @@
 </head>
 
 <body>
-    <div class="container">
+	<div id="ajax-error-message" style="display:none">       
+      	Something went wrong with that request. Please try again.
+    </div>
+	 <div class="container">
         <div class="panel panel-default">
-            <div class="panel-body">
+            <div class="panel-body" id="signin">
                 <form class="form-inline" role="form">
                     <div class="form-group">
                         <label class="sr-only" for="githubUser">Github User Name</label>
-                        <input type="text" class="form-control" id="githubUser" placeholder="Enter Github User Name or Email">
+                        <input type="text" class="form-control" id="githubUser" placeholder="Enter Github User Name">
                     </div>
                     <div class="form-group">
                         <label class="sr-only" for="githubPassword">Password</label>
                         <input type="password" class="form-control" id="githubPassword" placeholder="Password">
                     </div>
-                    <button type="button" id="githubAuthButton" onclick="doGithubAuth()" class="btn btn-default">Github SignIn</button>
+                    <button type="button" id="githubAuthButton" class="btn btn-default">Github SignIn</button>
                 </form>
             </div>
+            <div class="panel-body" id="userdisplay" style="display: none">
+            	<div class="form-group">
+                        <label class="sr-only" for="githubUser">Github User Name</label>
+                        <span id="userName"></span>                        
+                 </div>
+                 <div class="form-group">
+                     <label class="sr-only" for="githubPassword">Password</label>
+                     <span id="password"></span>   
+                 </div>
+            </div>
         </div>
-        <div class="row" id="followingUsersContainer"></div>
-    </div>
+        <nav>
+        <div class="nav">
+			<ul id="menu-top" class="menu l_tinynav2">
+				<li class="menu-item " id="follows"><a href="javasript:void(0)">Follows</a></li>
+				<li class="menu-item"><a href="javasript:void(0)">API Documentation</a></li>
+				<li class="menu-item"><a href="javasript:void(0)">Blog</a></li>
+				<li class="menu-item"><a href="javasript:void(0)">Plugins</a></li>
+				<li class="menu-item"><a href="javasript:void(0)">Browser Support</a></li>
+			</ul>
+			<div class="row" id="followingUsersContainer"></div>
+		</div>
+		</nav>
+      </div>         
 </body>
 <script src="js/lib/underscore-min.js"></script>
 <script src="js/lib/base64.js"></script>
 <script src="js/github.js"></script>
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
 <script type="text/javascript">
+$(function(){
+	console.log($("#githubAuthButton"))
+	$("#githubAuthButton").click( function(){ doSignin(); });
+	$("#follows").click(function(){ 
+		doGithubAuth();
+	});
+	console.log("Ready");
+});
+
+function doSignin(){	
+	var github = new Github({
+		username: $("#githubUser").value,
+		password: $("#githubPassword").value,
+	});
+	var user = github.getUser();
+	user.listFollowing(document.getElementById("githubUser").value, function(err, userData) {
+        if (!err) {
+        	console.log("Sign successfully")
+        	$("#ajax-error-message").hide();
+        }else{
+        	console.log("Incorrect username or password.")
+        	$("#ajax-error-message").html("Incorrect username or password.");
+        	$("#ajax-error-message").show();
+        	console.log($("#ajax-error-message").html());
+        	//$("ajax-error-message").attr("style", "display:block;");  
+        }
+	});
+	
+}
+
 function doGithubAuth() {
     var github = new Github({
         username: document.getElementById("githubUser").value,

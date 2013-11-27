@@ -99,7 +99,7 @@ OAuth2.prototype.openAuthorizationCodePopup = function(callback) {
 
   window.location.assign(this.adapter.authorizationCodeURL(this.getConfig()));
   // Create a new tab with the OAuth 2.0 prompt
- /** chrome.tabs.create({url: this.adapter.authorizationCodeURL(this.getConfig())},
+ chrome.tabs.create({url: this.adapter.authorizationCodeURL(this.getConfig())},
   function(tab) {
     // 1. user grants permission for the application to access the OAuth 2.0
     // endpoint
@@ -111,7 +111,7 @@ OAuth2.prototype.openAuthorizationCodePopup = function(callback) {
     // (if there are multiple OAuth 2.0 adapters)
     // 6. Finally, the flow is finished and client code can call
     // myAuth.getAccessToken() to get a valid access token.
-  });*/
+  });
   
 };
 
